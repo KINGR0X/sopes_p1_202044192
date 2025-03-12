@@ -30,6 +30,26 @@ MODULE_VERSION("0.1");
 #define PROC_NAME "sysinfo_202044192" 
 #define MAX_CMDLINE_LENGTH 256
 
+// Función para extraer el ID del contenedor del Cmdline
+static char *extract_container_id(const char *cmdline) {
+    char *id_start = strstr(cmdline, "-id ");
+    if (!id_start) return NULL; // Si no se encuentra "-id", retornar NULL
+
+    id_start += 4; // Moverse al inicio del ID (después de "-id ")
+    char *id_end = strchr(id_start, ' '); // Buscar el siguiente espacio después del ID
+    if (!id_end) return NULL; // Si no hay espacio, el ID llega hasta el final
+
+    // Copiar el ID en un nuevo buffer
+    int id_length = id_end - id_start;
+    char *container_id = kmalloc(id_length + 1, GFP_KERNEL);
+    if (!container_id) return NULL;
+
+    strncpy(container_id, id_start, id_length);
+    container_id[id_length] = '\0'; // Asegurar que esté terminado en null
+
+    return container_id;
+}
+
 static char *get_process_cmdline(struct task_struct *task) {
     struct mm_struct *mm;
     char *cmdline, *p;
@@ -115,9 +135,9 @@ static int sysinfo_show(struct seq_file *m, void *v) {
             unsigned long mem_usage = 0;
             unsigned long cpu_usage = 0;
             char *cmdline = NULL;
+            char *container_id = NULL;
             unsigned long long read_bytes = 0, write_bytes = 0;
             struct task_struct *child_task;
-            struct pid_namespace *pid_ns = task_active_pid_ns(task);
 
             if (task->mm) {
                 rss = get_mm_rss(task->mm) << (PAGE_SHIFT - 10); // RSS en KB
@@ -127,6 +147,11 @@ static int sysinfo_show(struct seq_file *m, void *v) {
             unsigned long total_time = task->utime + task->stime;
             cpu_usage = (total_time * 10000) / total_jiffies;
             cmdline = get_process_cmdline(task);
+
+            // Extraer el ID del contenedor del Cmdline
+            if (cmdline) {
+                container_id = extract_container_id(cmdline);
+            }
 
             // Obtener información de I/O
             for_each_thread(task, child_task) {
@@ -143,7 +168,7 @@ static int sysinfo_show(struct seq_file *m, void *v) {
             seq_printf(m, "  {\n");
             seq_printf(m, "    \"PID\": %d,\n", task->pid);
             seq_printf(m, "    \"Name\": \"%s\",\n", task->comm);
-            seq_printf(m, "    \"ContainerID\": \"%d\",\n", pid_ns->ns.inum);
+            seq_printf(m, "    \"ContainerID\": \"%s\",\n", container_id ? container_id : "N/A");
             seq_printf(m, "    \"MemoryUsage\": %lu.%02lu,\n", mem_usage / 100, mem_usage % 100);
             seq_printf(m, "    \"CPUUsage\": %lu.%02lu,\n", cpu_usage / 100, cpu_usage % 100);
             seq_printf(m, "    \"DiskUsageRead_mb\": %llu,\n", read_bytes / (1024 * 1024));
@@ -154,6 +179,9 @@ static int sysinfo_show(struct seq_file *m, void *v) {
 
             if (cmdline) {
                 kfree(cmdline);
+            }
+            if (container_id) {
+                kfree(container_id);
             }
         }
     }
