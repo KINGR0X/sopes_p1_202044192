@@ -170,7 +170,7 @@ static int sysinfo_show(struct seq_file *m, void *v) {
             seq_printf(m, "    \"Name\": \"%s\",\n", task->comm);
             seq_printf(m, "    \"ContainerID\": \"%s\",\n", container_id ? container_id : "N/A");
             seq_printf(m, "    \"MemoryUsage\": %lu.%02lu,\n", mem_usage / 100, mem_usage % 100);
-            seq_printf(m, "    \"CPUUsage\": %lu.%02lu,\n", cpu_usage / 100, cpu_usage % 100);
+            seq_printf(m, "    \"CPUUsage\": %lu.%02lu,\n", cpu_usage *10, cpu_usage );
             seq_printf(m, "    \"DiskUsageRead_mb\": %llu,\n", read_bytes / (1024 * 1024));
             seq_printf(m, "    \"DiskUsageWrite_mb\": %llu,\n", write_bytes / (1024 * 1024));
             seq_printf(m, "    \"IORead_mb\": %llu,\n", read_bytes / (1024 * 1024));

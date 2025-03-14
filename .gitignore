@@ -61,5 +61,5 @@ dkms.conf
 # Local History for Visual Studio Code
 .history/
 
-
+./target
 # End of https://mrkandreev.name/snippets/gitignore-generator/#C,VisualStudioCode,docker

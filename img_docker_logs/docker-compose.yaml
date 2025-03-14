@@ -1,0 +1,11 @@
+services:
+  python_service:
+    build: ./
+    container_name: container_logs
+    ports:
+      - 8000:8000
+    volumes:
+      - ./logs:/code/logs
+      - ./graphs:/code/graphs
+
+    command: ["fastapi", "run", "main.py", "--port", "8000"]
