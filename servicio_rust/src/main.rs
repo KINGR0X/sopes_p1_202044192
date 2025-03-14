@@ -353,7 +353,7 @@ fn cleanup() {
     }
 
     // Detener servicios Docker
-    let ruta = "../img_docker_logs";
+    let ruta = "../../img_docker_logs";
     let output = std::process::Command::new("sh")
         .arg("-c")
         .arg(format!("cd {} && sudo docker-compose down", &ruta))
@@ -384,7 +384,7 @@ fn main() {
 
     println!("------------------------------");
 
-    let ruta = "../img_docker_logs";
+    let ruta = "../../img_docker_logs";
     let mut container_id = String::new();
 
     let output = std::process::Command::new("sh")
