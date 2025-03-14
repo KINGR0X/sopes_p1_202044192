@@ -56,6 +56,8 @@ struct LogProcess {
     io_write_mb: f64,
     action: String,
     timestamp: String,
+    creation_time: Option<String>, 
+    deletion_time: Option<String>
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -188,11 +190,11 @@ async fn enviar_json_logs(logs_procesess: &Vec<LogProcess>) -> Result<(), Box<dy
         .send()
         .await?;
 
-    if response.status().is_success() {
-        println!("¡Datos enviados exitosamente!");
-    } else {
-        println!("Error al enviar los datos: {:?}", response.status());
-    }
+    // if response.status().is_success() {
+    //     println!("¡Datos enviados exitosamente!");
+    // } else {
+    //     println!("Error al enviar los datos: {:?}", response.status());
+    // }
 
     Ok(())
 }
@@ -205,11 +207,11 @@ async fn enviar_json_ram(log_ram: &Vec<LogRam>) -> Result<(), Box<dyn Error>> {
         .send()
         .await?;
 
-    if response.status().is_success() {
-        println!("¡Datos enviados exitosamente!");
-    } else {
-        println!("Error al enviar los datos: {:?}", response.status());
-    }
+    // if response.status().is_success() {
+    //     println!("¡Datos enviados exitosamente!");
+    // } else {
+    //     println!("Error al enviar los datos: {:?}", response.status());
+    // }
 
     Ok(())
 }
@@ -296,8 +298,9 @@ fn analyzer(system_info: SystemInfo, logs_container_id: &str) {
 
         // Eliminar contenedores viejos (mantener solo el más reciente)
         if containers.len() > 1 {
-            for (process, _) in containers.iter().skip(1) {
+            for (process, creation_time) in containers.iter().skip(1) {
                 let timestamp = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+                let deletion_time = timestamp.clone();
                 
                 let log = LogProcess {
                     pid: process.pid,
@@ -311,6 +314,8 @@ fn analyzer(system_info: SystemInfo, logs_container_id: &str) {
                     io_write_mb: process.io_write_mb,
                     action: "killed".to_string(),
                     timestamp,
+                    creation_time: Some(creation_time.format("%Y-%m-%d %H:%M:%S").to_string()),
+                    deletion_time: Some(deletion_time),
                 };
 
                 log_proc_list.push(log);
@@ -368,6 +373,22 @@ fn cleanup() {
             String::from_utf8_lossy(&output.stderr)
         );
     }
+
+    // // Eliminar todos los contenedores sobrantes
+    // let output = std::process::Command::new("sh")
+    //     .arg("-c")
+    //     .arg("sudo docker ps -aq | xargs -r sudo docker rm -f")
+    //     .output()
+    //     .expect("Fallo al eliminar contenedores sobrantes");
+
+    // if output.status.success() {
+    //     println!("Contenedores sobrantes eliminados");
+    // } else {
+    //     eprintln!(
+    //         "Error al eliminar contenedores sobrantes: {}",
+    //         String::from_utf8_lossy(&output.stderr)
+    //     );
+    // }
 
     println!("------------------------------");
 }
