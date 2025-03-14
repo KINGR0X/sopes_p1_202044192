@@ -14,11 +14,6 @@ from matplotlib.dates import ConciseDateFormatter
 app = FastAPI()
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
 @app.get("/graph")
 def get_graphs():
     ruta_memory = "./logs/memory.json"
