@@ -299,7 +299,7 @@ cargo run
 Por ultimo creamos el cronjob, para ello se debe de abrir un la carpeta donde se encuentra el archivo de crear_cronjob.sh (/home/elian/Descargas/sopes_p1_202044192/scrips), luego se ejecuta el siguiente comando:
 
 ```bash
-sudo ./crearCronjob.sh
+./crearCronjob.sh
 ```
 
 Para comprobar que si se creo el cronjob podemos abrir una nueva terminal y usar el siguiente comando:
