@@ -18,10 +18,3 @@ spec:
                 port:
                   number: 8080
             path: /grpc-go
-          - pathType: Prefix
-            backend:
-              service:
-                name: rust-client-service
-                port:
-                  number: 8081
-            path: /grpc-rust
