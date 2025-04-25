@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: grpc-client-go
-          image: elianreyes/go_client_grpc_sop1:0.1
+          image: elianreyes/go_client_grpc_sop1:0.3
           ports:
             - containerPort: 8080
 

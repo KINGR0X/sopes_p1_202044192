@@ -14,8 +14,6 @@ gcloud container clusters create proyecto2 --num-nodes=4 --region=us-west1-a --t
 kubectl apply -f ./k8s/namespace.yaml
 ```
 
-**cambiar el host**
-
 ### Ingress
 
 creado con ayuda de plantilla de helm
@@ -28,6 +26,14 @@ helm upgrade --install ingress-nginx ingress-nginx \
  --repo https://kubernetes.github.io/ingress-nginx \
  --namespace ingress-nginx --create-namespace
 ```
+
+verificar host, aparecera como LoadBalancer Ingress
+
+```cmd
+kubectl describe service ingress-nginx-controller --namespace ingress-nginx
+```
+
+**cambiar el host en ingress.yaml**
 
 Configurar ingress
 
