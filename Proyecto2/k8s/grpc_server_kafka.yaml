@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grpc_server_go
+  name: grpc-server-go
   namespace: sopes1
 spec:
   selector:
     matchLabels:
-      app: grpc_server_go
+      app: grpc-server-go
   template:
     metadata:
       labels:
-        app: grpc_server_go
+        app: grpc-server-go
     spec:
       containers:
-        - name: grpc_server_go
+        - name: grpc-server-go
           image: elianreyes/go_server_grpc_sop1:0.1
           ports:
             - containerPort: 50051
@@ -21,11 +21,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: grpc_server_service_kafka
+  name: grpc-server-service-kafka
   namespace: sopes1
 spec:
   selector:
-    app: grpc_server_go
+    app: grpc-server-go
   ports:
     - protocol: TCP
       port: 50051

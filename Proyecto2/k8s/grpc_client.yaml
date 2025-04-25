@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grpc_client_go
+  name: grpc-client-go
   namespace: sopes1
 spec:
   selector:
     matchLabels:
-      app: grpc_client_go
+      app: grpc-client-go
   template:
     metadata:
       labels:
-        app: grpc_client_go
+        app: grpc-client-go
     spec:
       containers:
-        - name: grpc_client_go
+        - name: grpc-client-go
           image: elianreyes/go_client_grpc_sop1:0.1
           ports:
             - containerPort: 8080
@@ -22,11 +22,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: go_client_service
+  name: go-client-service
   namespace: sopes1
 spec:
   selector:
-    app: grpc_client_go
+    app: grpc-client-go
   ports:
     - protocol: TCP
       port: 8080
@@ -37,13 +37,13 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: hpa_node2
+  name: hpa-node2
   namespace: sopes1
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: grpc_client_go
+    name: grpc-client-go
   minReplicas: 1
   maxReplicas: 3
   targetCPUUtilizationPercentage: 30
