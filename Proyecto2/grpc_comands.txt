@@ -41,15 +41,19 @@ go mod init grpc-client
 go get google.golang.org/grpc
 go get google.golang.org/protobuf
 
-# Docker
+# === Docker ===
 
-docker build -t sergioferrer9/grpc-server:1.0 .
-docker run -d --name grpc-server -p 50051:50051 sergioferrer9/grpc-server:1.0
-docker push sergioferrer9/grpc-server:1.0
+# Server
+docker build -t elianreyes/go_server_grpc_sop1:0.1 .
 
-docker build -t sergioferrer9/grpc-client:1.0 .
-docker run -d --name grpc-client --network="host" sergioferrer9/grpc-client:1.0
-docker push sergioferrer9/grpc-client:1.0
+docker run -d --name grpc-server -p 50051:50051 elianreyes/go_server_grpc_sop1:0.1
+docker push elianreyes/go_server_grpc_sop1:0.1
+
+# client
+docker build -t elianreyes/go_client_grpc_sop1:0.1 .
+
+docker run -d --name grpc-client --network="host" elianreyes/go_client_grpc_sop1:0.1
+docker push elianreyes/go_client_grpc_sop1:0.1
 
 
 # PRODUCER, CONSUMER, KAFKA............
