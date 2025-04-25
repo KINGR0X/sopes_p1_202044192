@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sopes1_ingress
+  namespace: sopes1
+  labels:
+    name: sopes1_ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: xx.nip.io
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: go_client_service
+                port:
+                  number: 8080
+            path: /grpc-go
+          - pathType: Prefix
+            backend:
+              service:
+                name: rust_client_service
+                port:
+                  number: 8081
+            path: /grpc-rust

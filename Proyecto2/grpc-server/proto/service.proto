@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package tweet;
+
+option go_package = "./;tweet";
+
+
+
+service Tweet {
+    rpc SendTweet(TweetRequest) returns (TweetResponse);
+}
+
+
+// The tweet request message
+message TweetRequest {
+    string description = 1;
+    string country = 2;
+    Weather weather = 3;
+}
+
+
+enum Weather {
+    rainy = 0;
+    cloudy = 1;
+    sunny = 2;
+}
+
+message TweetResponse {
+    bool success = 1;
+}
