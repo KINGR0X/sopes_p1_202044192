@@ -55,24 +55,6 @@ docker build -t elianreyes/go_client_grpc_sop1:0.4 .
 docker run -d --name grpc-client --network="host" elianreyes/go_client_grpc_sop1:0.1
 docker push elianreyes/go_client_grpc_sop1:0.4
 
-
-# PRODUCER, CONSUMER, KAFKA............
-
-mkdir go-producer 
-cd go-producer
-go mod init go-producer
-
-mkdir go-consumer 
-cd go-consumer
-go mod init go-consumer
-
-#instalar Dependencias
-go mod tidy
-
-# Producer
-docker build -t sergioferrer9/kafka-producer:1.1 .
-docker push sergioferrer9/kafka-producer:1.1
-
-# Consumer
-docker build -t sergioferrer9/kafka-consumer:1.0 .
-docker push sergioferrer9/kafka-consumer:1.0
+# kafka-consumer
+docker build -t elianreyes/kafka-consumer:1.0 .
+docker push elianreyes/kafka-consumer:1.0

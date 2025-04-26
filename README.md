@@ -72,3 +72,36 @@ kubectl apply -f ./k8s/consumer.yaml
 ```cmd
 kubectl apply .f ./k8s/redis.yaml
 ```
+
+## Grafana
+
+grafana con helm
+
+```cmd
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+```
+
+Instalacion de grafana
+
+```cmd
+helm install my-grafana grafana/grafana
+```
+
+Exponer el servicio de grafana
+
+```cmd
+kubectl expose service my-grafana --type=NodePort --target-port=3000 --name=grafana-node-port-service
+```
+
+Obtener la ip del nodo
+
+```cmd
+kubectl get nodes -o wide
+```
+
+Obtner la contraseña de grafana
+
+```cmd
+kubectl get secret --namespace default my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
