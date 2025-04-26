@@ -3,7 +3,6 @@ package redis
 import (
 	"consumer/structs"
 	"context"
-	"fmt"
 	"log"
 	"sync"
 
@@ -34,14 +33,14 @@ func RedisInstance() *redis.Client {
 		defer redisLock.Unlock()
 
 		if redisClient == nil {
-			fmt.Println("Creating single redis instance now.")
+			log.Println("Creating single redis instance now.")
 			redisClient = InitRedis()
 		} else {
-			fmt.Println("Single instance already created.")
+			log.Println("Single instance already created.")
 		}
 
 	} else {
-		fmt.Println("Single instance already created.")
+		log.Println("Single instance already created.")
 	}
 
 	return redisClient
@@ -68,14 +67,14 @@ func Insert(value structs.Tweet) {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Nuevo valor de %s en %s: %d\n", value.Country, weather, newValue)
+	log.Printf("Nuevo valor de %s en %s: %d\n", value.Country, weather, newValue)
 
 	// Incrementar contador total por país
 	newValue, err = client.HIncrBy(ctx, value.Country, "total", 1).Result()
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Nuevo valor de %s en %s: %d\n", value.Country, "total", newValue)
+	log.Printf("Nuevo valor de %s en %s: %d\n", value.Country, "total", newValue)
 
 
 }

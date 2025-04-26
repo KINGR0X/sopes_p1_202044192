@@ -61,6 +61,10 @@ Desplegado con chart de streamzi
 kubectl create -f 'https://strimzi.io/install/latest?namespace=sopes1' -n sopes1
 ```
 
+```cmd
+kubectl apply -f https://strimzi.io/examples/latest/kafka/kraft/kafka-single-node.yaml -n sopes1
+```
+
 kafka consumer
 
 ```cmd
@@ -70,7 +74,7 @@ kubectl apply -f ./k8s/consumer.yaml
 ## Redis deployment
 
 ```cmd
-kubectl apply .f ./k8s/redis.yaml
+kubectl apply -f ./k8s/redis.yaml
 ```
 
 ## Grafana
@@ -100,8 +104,28 @@ Obtener la ip del nodo
 kubectl get nodes -o wide
 ```
 
+escoger cualquier IP externa de los nodos enumerados por el comando anterior
+
+**_ej: 34.19.107.66_**
+
+obtener el port de grafana
+
+```cmd
+kubectl get svc grafana-node-port-service
+```
+
+**_80:30511/TCP_**
+
+direccion para acceder a grafana
+
+**http://34.19.107.66:30511/login**
+
 Obtner la contraseña de grafana
 
 ```cmd
 kubectl get secret --namespace default my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
+
+## Crear dashboard en grafana con los datos de redis
+
+Connections -> redis

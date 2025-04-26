@@ -56,5 +56,5 @@ docker run -d --name grpc-client --network="host" elianreyes/go_client_grpc_sop1
 docker push elianreyes/go_client_grpc_sop1:0.4
 
 # kafka-consumer
-docker build -t elianreyes/kafka-consumer:1.0 .
-docker push elianreyes/kafka-consumer:1.0
+docker build -t elianreyes/kafka-consumer:1.1 .
+docker push elianreyes/kafka-consumer:1.1

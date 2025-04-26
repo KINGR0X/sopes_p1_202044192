@@ -11,11 +11,11 @@ COPY . .
 RUN go build \
   -ldflags="-linkmode external -extldflags -static" \
   -tags netgo \
-  -o main
+  -o consumer
 
 FROM scratch
 
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=build /app/main main
+COPY --from=build /app/consumer consumer
 
-CMD ["/main"]
+CMD ["/consumer"]

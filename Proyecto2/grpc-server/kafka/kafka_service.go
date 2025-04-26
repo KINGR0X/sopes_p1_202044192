@@ -15,7 +15,6 @@ func SendData(data structs.Tweet, topic string) {
 
 	conn, err := kafka.DialLeader(context.Background(), "tcp", "my-cluster-kafka-bootstrap:9092", topic, partition)
 
-
 	if err != nil {
 		log.Printf("Error al conectar con Kafka: %v", err)
 	}

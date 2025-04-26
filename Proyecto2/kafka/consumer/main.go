@@ -5,7 +5,6 @@ import (
 	"consumer/structs"
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -15,10 +14,9 @@ import (
 func main() {
 
 	topic := "tweets-topic"
-	broker := "my-cluster-kafka-bootstrap:9092"
 
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:     []string{broker},
+		Brokers:     []string{"my-cluster-kafka-bootstrap:9092"},
 		Topic:       topic,
 		Partition:   0,
 		MaxBytes:    10e6, // 10MB
@@ -35,10 +33,10 @@ func main() {
 		}
 
 		// Imprimir el mensaje
-		fmt.Printf("mensaje %d: %s= %s\n", m.Offset, string(m.Key), string(m.Value))
+		log.Printf("mensaje %d: %s= %s\n", m.Offset, string(m.Key), string(m.Value))
 
 		//mandando a redis
-		fmt.Println("mandando a redis")
+		log.Println("mandando a redis")
 		redistInsert(m.Value)
 
 		// Commit el mensaje
@@ -59,7 +57,7 @@ func redistInsert(data []byte) {
 
 	err := json.Unmarshal(data, &jsonData)
 	if err != nil {
-		fmt.Printf("Failed to unmarshal message: %s", err)
+		log.Printf("Failed to unmarshal message: %s", err)
 		return
 	}
 
