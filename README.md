@@ -54,3 +54,21 @@ kubectl apply -f ./k8s/grpc_server_kafka.yaml
 ```
 
 ## kafka deployment
+
+Desplegado con chart de streamzi
+
+```cmd
+kubectl create -f 'https://strimzi.io/install/latest?namespace=sopes1' -n sopes1
+```
+
+kafka consumer
+
+```cmd
+kubectl apply -f ./k8s/consumer.yaml
+```
+
+## Redis deployment
+
+```cmd
+kubectl apply .f ./k8s/redis.yaml
+```
