@@ -62,7 +62,7 @@ kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
 ```
 
 ```cmd
-kubectl apply -f ./k8s/kafka-single-node.yaml -n kafka
+kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
 ```
 
 kafka consumer
@@ -146,10 +146,4 @@ Obtener datos globales:
 
 ```cmd
 HGETALL weather:global
-```
-
-Obtener un clima específico de un país:
-
-```cmd
-HGET country:ARG rainy
 ```

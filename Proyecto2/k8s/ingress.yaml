@@ -14,7 +14,7 @@ spec:
           - pathType: Prefix
             backend:
               service:
-                name: go-client-service
+                name: api_rust
                 port:
-                  number: 8080
-            path: /grpc-go
+                  number: 8081
+            path: /tweet

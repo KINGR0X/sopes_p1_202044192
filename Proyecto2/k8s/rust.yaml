@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-rust
+  namespace: sopes1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-rust
+  template:
+    metadata:
+      labels:
+        app: api-rust
+    spec:
+      containers:
+        - name: api-rust
+          image: elianreyes/api-rust:0.1
+          ports:
+            - containerPort: 8081
+          env:
+            - name: RUST_LOG
+              value: "info"
+            - name: GO_SERVICE_URL
+              value: "http://go-client-service.sopes1.svc.cluster.local:8080/grpc-go"
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rust-service
+  namespace: sopes1
+spec:
+  selector:
+    app: api-rust
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-rust-api
+  namespace: sopes1
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api-rust
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 30

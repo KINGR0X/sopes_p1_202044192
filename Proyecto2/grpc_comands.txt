@@ -54,3 +54,7 @@ docker push elianreyes/go_client_grpc_sop1:0.4
 # kafka-consumer
 docker build -t elianreyes/kafka-consumer:1.8 .
 docker push elianreyes/kafka-consumer:1.8
+
+#rust_api
+docker build -t elianreyes/api-rust:0.1 .
+docker push elianreyes/api-rust:0.1
