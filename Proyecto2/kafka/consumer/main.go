@@ -16,7 +16,7 @@ func main() {
 	topic := "tweets-topic"
 
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:     []string{"my-cluster-kafka-bootstrap:9092"},
+		Brokers:     []string{"my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"},
 		Topic:       topic,
 		Partition:   0,
 		MaxBytes:    10e6, // 10MB

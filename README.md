@@ -3,7 +3,7 @@
 ## Iniciar el cluster
 
 ```cmd
-gcloud container clusters create proyecto2 --num-nodes=4 --region=us-west1-a --tags=allin,allout --machine-type=e2-medium --no-enable-network-policy --disk-size=25GB --disk-type pd-standard
+gcloud container clusters create proyecto22 --num-nodes=4 --region=us-west1-a --tags=allin,allout --machine-type=e2-medium --no-enable-network-policy --disk-size=100GB --disk-type=pd-standard
 ```
 
 ## Deployments
@@ -58,11 +58,11 @@ kubectl apply -f ./k8s/grpc_server_kafka.yaml
 Desplegado con chart de streamzi
 
 ```cmd
-kubectl create -f 'https://strimzi.io/install/latest?namespace=sopes1' -n sopes1
+kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
 ```
 
 ```cmd
-kubectl apply -f https://strimzi.io/examples/latest/kafka/kraft/kafka-single-node.yaml -n sopes1
+kubectl apply -f ./k8s/kafka-single-node.yaml -n kafka
 ```
 
 kafka consumer
@@ -128,4 +128,28 @@ kubectl get secret --namespace default my-grafana -o jsonpath="{.data.admin-pass
 
 ## Crear dashboard en grafana con los datos de redis
 
-Connections -> redis
+Connections -> Add new connection -> redis
+
+addres: redis.sopes1.svc.cluster.local:6379
+Password: xx
+save & test
+
+## Peticiones de redis en grafana
+
+Obtener datos de un país:
+
+```cmd
+HGETALL country:ARG
+```
+
+Obtener datos globales:
+
+```cmd
+HGETALL weather:global
+```
+
+Obtener un clima específico de un país:
+
+```cmd
+HGET country:ARG rainy
+```

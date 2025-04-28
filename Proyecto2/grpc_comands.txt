@@ -44,17 +44,13 @@ go get google.golang.org/protobuf
 # === Docker ===
 
 # Server
-docker build -t elianreyes/go_server_grpc_sop1:0.1 .
-
-docker run -d --name grpc-server -p 50051:50051 elianreyes/go_server_grpc_sop1:0.1
-docker push elianreyes/go_server_grpc_sop1:0.1
+docker build -t elianreyes/go_server_grpc_sop1:0.2 .
+docker push elianreyes/go_server_grpc_sop1:0.2
 
 # client
 docker build -t elianreyes/go_client_grpc_sop1:0.4 .
-
-docker run -d --name grpc-client --network="host" elianreyes/go_client_grpc_sop1:0.1
 docker push elianreyes/go_client_grpc_sop1:0.4
 
 # kafka-consumer
-docker build -t elianreyes/kafka-consumer:1.1 .
-docker push elianreyes/kafka-consumer:1.1
+docker build -t elianreyes/kafka-consumer:1.8 .
+docker push elianreyes/kafka-consumer:1.8

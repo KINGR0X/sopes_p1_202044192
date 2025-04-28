@@ -13,7 +13,7 @@ import (
 func SendData(data structs.Tweet, topic string) {
 	partition := 0
 
-	conn, err := kafka.DialLeader(context.Background(), "tcp", "my-cluster-kafka-bootstrap:9092", topic, partition)
+	conn, err := kafka.DialLeader(context.Background(), "tcp", "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092", topic, partition)
 
 	if err != nil {
 		log.Printf("Error al conectar con Kafka: %v", err)

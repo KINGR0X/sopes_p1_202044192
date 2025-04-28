@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: kafka-consumer
-          image: elianreyes/kafka-consumer:1.1
+          image: elianreyes/kafka-consumer:1.6
           ports:
             - containerPort: 8080

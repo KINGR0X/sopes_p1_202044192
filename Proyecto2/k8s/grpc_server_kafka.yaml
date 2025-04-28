@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: grpc-server-go
-          image: elianreyes/go_server_grpc_sop1:0.1
+          image: elianreyes/go_server_grpc_sop1:0.2
           ports:
             - containerPort: 50051
 ---

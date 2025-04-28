@@ -3,46 +3,38 @@ package redis
 import (
 	"consumer/structs"
 	"context"
-	"log"
+	"fmt"
 	"sync"
 
 	"github.com/redis/go-redis/v9"
 )
 
-var redisLock = &sync.Mutex{}
-
-var redisClient *redis.Client
+var (
+	redisLock    = &sync.Mutex{}
+	redisClient  *redis.Client
+	weatherTypes = map[int]string{
+		0: "rainy",
+		1: "cloudy",
+		2: "sunny",
+	}
+)
 
 func InitRedis() *redis.Client {
-
-	host := "redis"
-	port := "6379"
-	client := redis.NewClient(&redis.Options{
-		Addr:     host + ":" + port,
+	return redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
 		Password: "sopes999",
 		DB:       0,
 	})
-
-	return client
 }
 
 func RedisInstance() *redis.Client {
-
 	if redisClient == nil {
 		redisLock.Lock()
 		defer redisLock.Unlock()
-
 		if redisClient == nil {
-			log.Println("Creating single redis instance now.")
 			redisClient = InitRedis()
-		} else {
-			log.Println("Single instance already created.")
 		}
-
-	} else {
-		log.Println("Single instance already created.")
 	}
-
 	return redisClient
 }
 
@@ -50,31 +42,44 @@ func Insert(value structs.Tweet) {
 	ctx := context.Background()
 	client := RedisInstance()
 
-	weather := "sunny"
-
-	switch value.Weather {
-	case 1:
-		weather = "rainy"
-	case 2:
-		weather = "cloudy"
-	case 3:
-		weather = "snowy"
+	weather, ok := weatherTypes[value.Weather]
+	if !ok {
+		weather = "unknown"
 	}
 
-	// Incrementar contador por país y clima
-	newValue, err := client.HIncrBy(ctx, value.Country, weather, 1).Result()
+	// Sorted Sets para cada tipo de clima
+	client.ZIncrBy(ctx, fmt.Sprintf("weather:%s", weather), 1, value.Country)
+	
+	client.HIncrBy(ctx, fmt.Sprintf("country:%s", value.Country), weather, 1)
+	client.HIncrBy(ctx, "weather:global", weather, 1)
+
+}
+
+func GetDataForGrafana(ctx context.Context) ([]map[string]interface{}, error) {
+	client := RedisInstance()
+	var result []map[string]interface{}
+
+	// Obtener todos los países
+	countries, err := client.Keys(ctx, "country:*").Result()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	log.Printf("Nuevo valor de %s en %s: %d\n", value.Country, weather, newValue)
+	for _, countryKey := range countries {
+		country := countryKey[8:] // remove "country:" prefix
+		weatherData, err := client.HGetAll(ctx, countryKey).Result()
+		if err != nil {
+			return nil, err
+		}
 
-	// Incrementar contador total por país
-	newValue, err = client.HIncrBy(ctx, value.Country, "total", 1).Result()
-	if err != nil {
-		log.Fatal(err)
+		for weather, count := range weatherData {
+			result = append(result, map[string]interface{}{
+				"country": country,
+				"weather": weather,
+				"count":   count,
+			})
+		}
 	}
-	log.Printf("Nuevo valor de %s en %s: %d\n", value.Country, "total", newValue)
 
-
+	return result, nil
 }
