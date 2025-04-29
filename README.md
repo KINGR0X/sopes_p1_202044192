@@ -2,8 +2,10 @@
 
 ## Iniciar el cluster
 
+us-west1-a
+
 ```cmd
-gcloud container clusters create proyecto22 --num-nodes=4 --region=us-west1-a --tags=allin,allout --machine-type=e2-medium --no-enable-network-policy --disk-size=100GB --disk-type=pd-standard
+gcloud container clusters create proyecto2 --num-nodes=4 --region=us-west2-a --tags=allin,allout --machine-type=e2-medium --no-enable-network-policy --disk-size=100GB --disk-type=pd-standard
 ```
 
 ## Deployments
@@ -41,6 +43,12 @@ Configurar ingress
 kubectl apply -f ./k8s/ingress.yaml
 ```
 
+## Api_rust
+
+```cmd
+kubectl apply -f ./k8s/rust.yaml
+```
+
 ### Go gRPC client
 
 ```cmd
@@ -62,7 +70,7 @@ kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
 ```
 
 ```cmd
-kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
+kubectl apply -f https://strimzi.io/examples/latest/kafka/kraft/kafka-single-node.yaml -n kafka
 ```
 
 kafka consumer
@@ -131,7 +139,7 @@ kubectl get secret --namespace default my-grafana -o jsonpath="{.data.admin-pass
 Connections -> Add new connection -> redis
 
 addres: redis.sopes1.svc.cluster.local:6379
-Password: xx
+Password: sopes999
 save & test
 
 ## Peticiones de redis en grafana
@@ -139,11 +147,35 @@ save & test
 Obtener datos de un país:
 
 ```cmd
-HGETALL country:ARG
+HGETALL country:GT
 ```
 
 Obtener datos globales:
 
 ```cmd
 HGETALL weather:global
+```
+
+## Ejecutar el servicio de Locus local
+
+```cmd
+python3 -m venv venv
+source venv/bin/activate
+pip3 install locust
+
+locust -f app.py --headless -u 10 -r 10 -t 10000 --host http://34.94.179.180.nip.io
+```
+
+## Limpiar redis
+
+acceder al pod
+
+```cmd
+kubectl exec -it "pod" -n sopes1 -- /bin/bash
+```
+
+comando para borrar la base de datos
+
+```cmd
+redis-cli -a sopes999 FLUSHDB
 ```

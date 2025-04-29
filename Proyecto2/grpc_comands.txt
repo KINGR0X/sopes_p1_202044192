@@ -58,3 +58,4 @@ docker push elianreyes/kafka-consumer:1.8
 #rust_api
 docker build -t elianreyes/api-rust:0.1 .
 docker push elianreyes/api-rust:0.1
+

@@ -21,7 +21,7 @@ var (
 
 func InitRedis() *redis.Client {
 	return redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
+		Addr:     "redis.sopes1.svc.cluster.local:6379",
 		Password: "sopes999",
 		DB:       0,
 	})

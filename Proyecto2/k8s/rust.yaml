@@ -34,7 +34,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rust-service
+  name: api-rust
   namespace: sopes1
 spec:
   selector:

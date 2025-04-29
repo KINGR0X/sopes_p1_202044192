@@ -43,7 +43,7 @@ async fn main() -> std::io::Result<()> {
     
     HttpServer::new(|| {
         App::new()
-            .route("/tweet", web::post().to(handle_tweet))
+            .route("/input", web::post().to(handle_tweet))
     })
     .bind("0.0.0.0:8081")?
     .run()
