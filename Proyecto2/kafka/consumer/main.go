@@ -52,7 +52,6 @@ func main() {
 }
 
 func redistInsert(data []byte) {
-
 	var jsonData structs.Tweet
 
 	err := json.Unmarshal(data, &jsonData)
@@ -61,6 +60,6 @@ func redistInsert(data []byte) {
 		return
 	}
 
-	// go rutina para insertar en Redis
-	go redis.Insert(jsonData)
+	// Remove the goroutine to make it synchronous
+	redis.Insert(jsonData)
 }

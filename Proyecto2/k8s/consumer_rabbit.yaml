@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kafka-consumer
+  name: rabbitmq-consumer
   namespace: sopes1
 spec:
   selector:
     matchLabels:
-      app: kafka-consumer
+      app: rabbitmq-consumer
   template:
     metadata:
       labels:
-        app: kafka-consumer
+        app: rabbitmq-consumer
     spec:
       containers:
-        - name: kafka-consumer
-          image: elianreyes/kafka-consumer:1.9
+        - name: rabbitmq-consumer
+          image: elianreyes/consumer-rabbit:0.2
           ports:
             - containerPort: 8080

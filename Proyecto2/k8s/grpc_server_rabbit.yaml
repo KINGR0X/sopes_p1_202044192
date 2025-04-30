@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-server-rabbit
+  namespace: sopes1
+spec:
+  selector:
+    matchLabels:
+      app: grpc-server-rabbit
+  template:
+    metadata:
+      labels:
+        app: grpc-server-rabbit
+    spec:
+      containers:
+        - name: grpc-server-rabbit
+          image: elianreyes/server-rabbit:0.2
+          ports:
+            - containerPort: 50051
+          env:
+            - name: RABBITMQ_URL
+              value: "amqp://guest:guest@rabbitmq:5672/"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: sopes1
+spec:
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3-management
+          ports:
+            - containerPort: 5672 # Puerto para AMQP
+            - containerPort: 15672 # Puerto para la interfaz de gestión
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: "guest"
+            - name: RABBITMQ_DEFAULT_PASS
+              value: "guest"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: sopes1
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - name: amqp
+      protocol: TCP
+      port: 5672
+      targetPort: 5672
+    - name: management
+      protocol: TCP
+      port: 15672
+      targetPort: 15672
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-server-service
+  namespace: sopes1
+spec:
+  selector:
+    app: grpc-server-rabbit
+  ports:
+    - protocol: TCP
+      port: 50051
+      targetPort: 50051
+  type: ClusterIP

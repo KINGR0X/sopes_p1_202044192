@@ -15,8 +15,10 @@ import (
 )
 
 var (
-	addr = flag.String("addr", "grpc-server-service-kafka:50051", "the address to connect to")
-	grpcConn *grpc.ClientConn
+	kafkaAddr  = flag.String("kafka-addr", "grpc-server-service-kafka:50051", "the address to connect to Kafka gRPC server")
+	rabbitAddr = flag.String("rabbit-addr", "grpc-server-service:50051", "the address to connect to RabbitMQ gRPC server")
+	kafkaConn  *grpc.ClientConn
+	rabbitConn *grpc.ClientConn
 )
 
 type Tweet struct {
@@ -27,8 +29,20 @@ type Tweet struct {
 
 func initGRPC() error {
 	var err error
-	grpcConn, err = grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	return err
+	
+	// Initialize Kafka connection
+	kafkaConn, err = grpc.Dial(*kafkaAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return fmt.Errorf("failed to connect to Kafka gRPC server: %v", err)
+	}
+	
+	// Initialize RabbitMQ connection
+	rabbitConn, err = grpc.Dial(*rabbitAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return fmt.Errorf("failed to connect to RabbitMQ gRPC server: %v", err)
+	}
+	
+	return nil
 }
 
 func sendData(fiberCtx *fiber.Ctx) error {
@@ -41,11 +55,7 @@ func sendData(fiberCtx *fiber.Ctx) error {
 
 	fmt.Println("Received Tweet data:", body)
 
-	// Configurar contexto con timeout más generoso
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	// Convertir weather
+	// Convert weather
 	var weather pb.Weather
 	switch body.Weather {
 	case 0:
@@ -58,35 +68,67 @@ func sendData(fiberCtx *fiber.Ctx) error {
 		weather = pb.Weather_rainy
 	}
 
-	// Enviar mensaje
-	c := pb.NewTweetClient(grpcConn)
-	response, err := c.SendTweet(ctx, &pb.TweetRequest{
+	// Create request
+	request := &pb.TweetRequest{
 		Description: body.Descripcion,
 		Country:     body.Country,
 		Weather:     weather,
-	})
+	}
 
-	if err != nil {
+	// Configurar contexto con timeout más generoso
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Send to both servers
+	var responses []*pb.TweetResponse
+	var errors []error
+
+	// Send to Kafka server
+	kafkaClient := pb.NewTweetClient(kafkaConn)
+	kafkaResp, kafkaErr := kafkaClient.SendTweet(ctx, request)
+	responses = append(responses, kafkaResp)
+	errors = append(errors, kafkaErr)
+
+	// Send to RabbitMQ server
+	rabbitClient := pb.NewTweetClient(rabbitConn)
+	rabbitResp, rabbitErr := rabbitClient.SendTweet(ctx, request)
+	responses = append(responses, rabbitResp)
+	errors = append(errors, rabbitErr)
+
+	// Check for errors
+	errorMessages := make([]string, 0)
+	for _, err := range errors {
+		if err != nil {
+			errorMessages = append(errorMessages, err.Error())
+		}
+	}
+
+	if len(errorMessages) > 0 {
 		return fiberCtx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": fmt.Sprintf("gRPC error: %v", err),
+			"success": false,
+			"errors":  errorMessages,
+			"message": "Some gRPC calls failed",
 		})
 	}
 
 	return fiberCtx.JSON(fiber.Map{
 		"success":  true,
-		"message":  "Data sent to server successfully",
-		"response": response,
+		"message":  "Data sent to both servers successfully",
+		"responses": responses,
 	})
 }
 
 func main() {
 	flag.Parse()
 
-	// Inicializar conexión gRPC
+	// Initialize gRPC connections
 	if err := initGRPC(); err != nil {
-		log.Fatalf("failed to connect to gRPC server: %v", err)
+		log.Fatalf("failed to initialize gRPC connections: %v", err)
 	}
-	defer grpcConn.Close()
+	defer func() {
+		kafkaConn.Close()
+		rabbitConn.Close()
+	}()
 
 	app := fiber.New()
 	app.Post("/grpc-go", sendData)

@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: valkey-configmap
+  namespace: sopes1
+data:
+  valkey-config: |
+    dir /data
+    port 6378
+    requirepass sopes999
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: valkey
+  name: valkey
+  namespace: sopes1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: valkey
+  template:
+    metadata:
+      labels:
+        run: valkey
+    spec:
+      containers:
+        - name: valkey
+          image: valkey/valkey:7.2
+          command:
+            - valkey-server
+            - /valkeyconf/valkey.conf
+          ports:
+            - containerPort: 6378
+          resources:
+            limits:
+              cpu: "0.2"
+              memory: "128Mi"
+          volumeMounts:
+            - mountPath: /valkeyconf
+              name: config
+      volumes:
+        - name: config
+          configMap:
+            name: valkey-configmap
+            items:
+              - key: valkey-config
+                path: valkey.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: valkey
+  name: valkey
+  namespace: sopes1
+spec:
+  ports:
+    - port: 6378
+      protocol: TCP
+      targetPort: 6378
+  selector:
+    run: valkey
+  type: ClusterIP

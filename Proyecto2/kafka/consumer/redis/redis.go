@@ -47,39 +47,13 @@ func Insert(value structs.Tweet) {
 		weather = "unknown"
 	}
 
-	// Sorted Sets para cada tipo de clima
-	client.ZIncrBy(ctx, fmt.Sprintf("weather:%s", weather), 1, value.Country)
-	
-	client.HIncrBy(ctx, fmt.Sprintf("country:%s", value.Country), weather, 1)
-	client.HIncrBy(ctx, "weather:global", weather, 1)
-
-}
-
-func GetDataForGrafana(ctx context.Context) ([]map[string]interface{}, error) {
-	client := RedisInstance()
-	var result []map[string]interface{}
-
-	// Obtener todos los países
-	countries, err := client.Keys(ctx, "country:*").Result()
+	// Use a transaction to ensure atomic operations
+	pipe := client.TxPipeline()
+	pipe.ZIncrBy(ctx, fmt.Sprintf("weather:%s", weather), 1, value.Country)
+	pipe.HIncrBy(ctx, fmt.Sprintf("country:%s", value.Country), weather, 1)
+	pipe.HIncrBy(ctx, "weather:global", weather, 1)
+	_, err := pipe.Exec(ctx)
 	if err != nil {
-		return nil, err
+		fmt.Printf("Error executing Redis transaction: %v\n", err)
 	}
-
-	for _, countryKey := range countries {
-		country := countryKey[8:] // remove "country:" prefix
-		weatherData, err := client.HGetAll(ctx, countryKey).Result()
-		if err != nil {
-			return nil, err
-		}
-
-		for weather, count := range weatherData {
-			result = append(result, map[string]interface{}{
-				"country": country,
-				"weather": weather,
-				"count":   count,
-			})
-		}
-	}
-
-	return result, nil
 }

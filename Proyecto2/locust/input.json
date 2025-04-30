@@ -1,0 +1,77 @@
+[
+  {
+    "descripcion": "It's rainy today",
+    "country": "GT",
+    "weather": 0
+  },
+  {
+    "descripcion": "It's cloudy today",
+    "country": "GT",
+    "weather": 1
+  },
+  {
+    "descripcion": "It's sunny today",
+    "country": "GT",
+    "weather": 2
+  },
+  {
+    "descripcion": "It's rainy today",
+    "country": "SV",
+    "weather": 0
+  },
+  {
+    "descripcion": "It's cloudy today",
+    "country": "SV",
+    "weather": 1
+  },
+  {
+    "descripcion": "It's sunny today",
+    "country": "SV",
+    "weather": 2
+  },
+  {
+    "descripcion": "It's rainy today",
+    "country": "NI",
+    "weather": 0
+  },
+  {
+    "descripcion": "It's cloudy today",
+    "country": "NI",
+    "weather": 1
+  },
+  {
+    "descripcion": "It's sunny today",
+    "country": "NI",
+    "weather": 2
+  },
+  {
+    "descripcion": "It's rainy today",
+    "country": "CR",
+    "weather": 0
+  },
+  {
+    "descripcion": "It's cloudy today",
+    "country": "CR",
+    "weather": 1
+  },
+  {
+    "descripcion": "It's sunny today",
+    "country": "CR",
+    "weather": 2
+  },
+  {
+    "descripcion": "It's rainy today",
+    "country": "PA",
+    "weather": 0
+  },
+  {
+    "descripcion": "It's cloudy today",
+    "country": "PA",
+    "weather": 1
+  },
+  {
+    "descripcion": "It's sunny today",
+    "country": "PA",
+    "weather": 2
+  }
+]

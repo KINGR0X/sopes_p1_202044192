@@ -49,10 +49,16 @@ kubectl apply -f ./k8s/ingress.yaml
 kubectl apply -f ./k8s/rust.yaml
 ```
 
-### Go gRPC client
+## Go gRPC client
 
 ```cmd
 kubectl apply -f ./k8s/grpc_client.yaml
+```
+
+### gRPC rabbit server
+
+```cmd
+kubectl apply -f ./k8s/grpc_server_rabbit.yaml
 ```
 
 ## gRPC server
@@ -73,16 +79,28 @@ kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
 kubectl apply -f https://strimzi.io/examples/latest/kafka/kraft/kafka-single-node.yaml -n kafka
 ```
 
-kafka consumer
+## kafka consumer
 
 ```cmd
 kubectl apply -f ./k8s/consumer.yaml
+```
+
+## rabbit consumer
+
+```cmd
+kubectl apply -f ./k8s/consumer_rabbit.yaml
 ```
 
 ## Redis deployment
 
 ```cmd
 kubectl apply -f ./k8s/redis.yaml
+```
+
+## valkey deployment
+
+```cmd
+kubectl apply -f ./k8s/valkey.yaml
 ```
 
 ## Grafana
@@ -156,6 +174,14 @@ Obtener datos globales:
 HGETALL weather:global
 ```
 
+## Crear dashboard en grafana con los datos de valkey
+
+Connections -> Add new connection -> redis
+
+addres: valkey.sopes1.svc.cluster.local:6378
+Password: sopes999
+save & test
+
 ## Ejecutar el servicio de Locus local
 
 ```cmd
@@ -163,7 +189,7 @@ python3 -m venv venv
 source venv/bin/activate
 pip3 install locust
 
-locust -f app.py --headless -u 10 -r 10 -t 10000 --host http://34.94.179.180.nip.io
+python app.py http://34.94.158.179.nip.io
 ```
 
 ## Limpiar redis
