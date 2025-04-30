@@ -34,10 +34,6 @@ spec:
             - /redisconf/redis.conf
           ports:
             - containerPort: 6379
-          resources:
-            limits:
-              cpu: "0.2"
-              memory: "128Mi"
           volumeMounts:
             - mountPath: /redisconf
               name: config

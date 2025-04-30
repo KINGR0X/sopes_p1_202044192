@@ -39,21 +39,28 @@ func RedisInstance() *redis.Client {
 }
 
 func Insert(value structs.Tweet) {
-	ctx := context.Background()
-	client := RedisInstance()
+    ctx := context.Background()
+    client := RedisInstance()
 
-	weather, ok := weatherTypes[value.Weather]
-	if !ok {
-		weather = "unknown"
-	}
+    weather, ok := weatherTypes[value.Weather]
+    if !ok {
+        weather = "unknown"
+    }
 
-	// Use a transaction to ensure atomic operations
-	pipe := client.TxPipeline()
-	pipe.ZIncrBy(ctx, fmt.Sprintf("weather:%s", weather), 1, value.Country)
-	pipe.HIncrBy(ctx, fmt.Sprintf("country:%s", value.Country), weather, 1)
-	pipe.HIncrBy(ctx, "weather:global", weather, 1)
-	_, err := pipe.Exec(ctx)
-	if err != nil {
-		fmt.Printf("Error executing Redis transaction: %v\n", err)
-	}
+    // Operación atómica para incrementar los contadores
+    pipe := client.TxPipeline()
+    
+    // Incrementar ranking por país para este clima
+    pipe.ZIncrBy(ctx, fmt.Sprintf("weather:%s", weather), 1, value.Country)
+    
+    // Incrementar contador específico para este país+clima
+    pipe.HIncrBy(ctx, fmt.Sprintf("country:%s", value.Country), weather, 1)
+    
+    // Incrementar contador global para este clima
+    pipe.HIncrBy(ctx, "weather:global", weather, 1)
+    
+    _, err := pipe.Exec(ctx)
+    if err != nil {
+        fmt.Printf("Error executing Redis transaction: %v\n", err)
+    }
 }

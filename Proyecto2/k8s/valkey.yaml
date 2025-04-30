@@ -35,10 +35,6 @@ spec:
             - /valkeyconf/valkey.conf
           ports:
             - containerPort: 6378
-          resources:
-            limits:
-              cpu: "0.2"
-              memory: "128Mi"
           volumeMounts:
             - mountPath: /valkeyconf
               name: config
