@@ -64,5 +64,5 @@ docker build -t elianreyes/server-rabbit:0.2 .
 docker push elianreyes/server-rabbit:0.2
 
 #rabbit consumer
-docker build -t elianreyes/consumer-rabbit:0.3 .
-docker push elianreyes/consumer-rabbit:0.3
+docker build -t elianreyes/consumer-rabbit:0.7 .
+docker push elianreyes/consumer-rabbit:0.7

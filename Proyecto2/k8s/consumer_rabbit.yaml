@@ -15,19 +15,7 @@ spec:
     spec:
       containers:
         - name: rabbitmq-consumer
-          image: elianreyes/consumer-rabbit:0.3
+          image: elianreyes/consumer-rabbit:0.7
           ports:
             - containerPort: 8080
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 5
       restartPolicy: Always

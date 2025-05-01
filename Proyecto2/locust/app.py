@@ -12,6 +12,9 @@ CONCURRENT_USERS = 10
 REQUEST_COUNT = 0
 STATS = defaultdict(int)  # Para contar por tipo de clima
 
+# countries = ["GT", "SV", "NI", "CR", "PA"]
+# weather_options = [0, 1, 2]  # rainy=0, cloudy=1, sunny=2
+
 
 class LoadTester(HttpUser):
     wait_time = constant(0.1)
