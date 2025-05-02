@@ -17,7 +17,7 @@ metadata:
   name: redis
   namespace: sopes1
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       run: redis
